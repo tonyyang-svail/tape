@@ -39,8 +39,14 @@ using paddle::tape::CreateRecordioFileReader;
 using paddle::tape::ReadNext;
 
 TEST(Cifar, TestCPU) {
-  std::string filename1 = "/tmp/cifar10_train_64_CUDAPlace(1).recordio";
-  std::string filename2 = "/tmp/cifar10_test_64_CUDAPlace(1).recordio";
+  //  auto place = paddle::platform::CPUPlace();
+  auto place = paddle::platform::CUDAPlace(1);
+  reset_global_tape(place);
+
+  //  std::string filename1 = "/tmp/cifar10_train_64_CUDAPlace(1).recordio";
+  //  std::string filename2 = "/tmp/cifar10_test_64_CUDAPlace(1).recordio";
+  std::string filename1 = "/tmp/cifar10_train_64_CPUPlace.recordio";
+  std::string filename2 = "/tmp/cifar10_test_64_CPUPlace.recordio";
   auto train_reader = CreateRecordioFileReader(
       filename1, {128, 3, 32, 32, 32, 1}, {4, 2}, {0, 0});
   auto test_reader = CreateRecordioFileReader(
@@ -135,11 +141,8 @@ TEST(Cifar, TestCPU) {
 
   int total_steps = 10000;
   int test_steps = 1000;
-  int print_step = 5;
+  int print_step = 1000;
   float threshold = 0.6f;
-
-  //  auto place = paddle::platform::CPUPlace();
-  auto place = paddle::platform::CUDAPlace(1);
   for (int i = 0; i < total_steps; ++i) {
     LOG(INFO) << "Train step #" << i;
 
